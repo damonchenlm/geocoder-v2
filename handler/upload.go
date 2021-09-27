@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"geocoder-v2/global"
 	"geocoder-v2/model"
 	"geocoder-v2/util"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"regexp"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Upload(context *gin.Context) {
@@ -62,7 +64,20 @@ func Upload(context *gin.Context) {
 		} else {
 			queryText = largeLoc
 		}
+		// 去除 queryText 的各种特殊符号
+		queryText = strings.ReplaceAll(queryText, ".", "")
+		queryText = strings.ReplaceAll(queryText, "&", "")
+		queryText = strings.ReplaceAll(queryText, ":", "")
+		queryText = strings.ReplaceAll(queryText, ";", "")
+		queryText = strings.ReplaceAll(queryText, "<", "")
 		location.QueryText = queryText
+		// 将 location 存入数据库
+
+		// 开始查询 暂时写在这里
+		// 拼接查询 url
+		//url := "http://dev.virtualearth.net/REST/v1/Locations/" + queryText + "?include=queryParse&maxRes=1&key=" + global.KEY
+
+		global.DB.Create(&location)
 		locations = append(locations, location)
 	}
 	/*for i := range locations {
